@@ -1,0 +1,2250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DailyMate - All-in-One Everyday Utility Suite</title>
+  <meta name="description" content="DailyMate is your responsive, privacy-first everyday utility website: QR Generator, Image/PDF Tools, Budget Planner, and Daily Calculators with Free & Pro features.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- QRCode.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  
+  <!-- jsPDF Library for client-side PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-theme="light">
+  <!-- Toast Notification Hub -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Top Ad Banner (Free Tier) -->
+  <div id="top-ad-banner" class="ad-banner free-ad">
+    <div class="ad-content">
+      <span class="ad-badge">SPONSORED</span>
+      <p class="ad-text">
+        <strong>DailyMate Cloud Sync:</strong> Automatically back up your budgets & QR library across all devices.
+      </p>
+      <a href="#pro-modal" class="ad-cta btn-pro-trigger">Try 14 Days Free</a>
+      <button id="btn-close-ad" class="ad-dismiss" title="Dismiss or Upgrade to Pro" aria-label="Dismiss Ad">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Global Header & Navigation -->
+  <header class="app-header">
+    <div class="header-inner container">
+      <!-- Brand Logo -->
+      <a href="#home" class="brand-logo" id="brand-link">
+        <div class="logo-icon-box">
+          <i data-lucide="layers" class="logo-icon"></i>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">Daily<span class="brand-accent">Mate</span></span>
+          <span class="brand-tagline">Utility Suite</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Bar -->
+      <nav class="desktop-nav" aria-label="Main Navigation">
+        <button class="nav-item active" data-view="home">
+          <i data-lucide="layout-grid"></i>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-view="qr">
+          <i data-lucide="qr-code"></i>
+          <span>QR Studio</span>
+        </button>
+        <button class="nav-item" data-view="image-pdf">
+          <i data-lucide="file-image"></i>
+          <span>Image & PDF</span>
+        </button>
+        <button class="nav-item" data-view="budget">
+          <i data-lucide="wallet"></i>
+          <span>Budget Planner</span>
+        </button>
+        <button class="nav-item" data-view="calculators">
+          <i data-lucide="calculator"></i>
+          <span>Calculators</span>
+        </button>
+      </nav>
+
+      <!-- Header Action Controls -->
+      <div class="header-actions">
+        <!-- Quick Search Trigger -->
+        <button id="btn-search-trigger" class="btn-icon-text" title="Quick Search (Ctrl + K)">
+          <i data-lucide="search"></i>
+          <span class="search-label">Search</span>
+          <kbd class="kbd-shortcut">Ctrl K</kbd>
+        </button>
+
+        <!-- Dark / Light Theme Toggle -->
+        <button id="btn-theme-toggle" class="btn-icon" title="Toggle Dark / Light Theme" aria-label="Toggle Theme">
+          <i data-lucide="moon" id="theme-icon"></i>
+        </button>
+
+        <!-- Pro Tier Action Button -->
+        <button id="btn-pro-badge" class="btn-pro btn-pro-trigger" title="View Pro Features">
+          <i data-lucide="crown"></i>
+          <span id="pro-badge-label">Upgrade to Pro</span>
+        </button>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button id="btn-mobile-menu" class="btn-icon mobile-only" aria-label="Toggle Mobile Menu">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Slide-out Drawer Navigation -->
+    <div id="mobile-nav-drawer" class="mobile-nav-drawer">
+      <div class="drawer-header">
+        <span class="drawer-title">Navigation</span>
+        <button id="btn-close-mobile-nav" class="btn-icon" aria-label="Close Navigation">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="drawer-links">
+        <button class="drawer-link active" data-view="home">
+          <i data-lucide="layout-grid"></i> Dashboard
+        </button>
+        <button class="drawer-link" data-view="qr">
+          <i data-lucide="qr-code"></i> QR Generator Studio
+        </button>
+        <button class="drawer-link" data-view="image-pdf">
+          <i data-lucide="file-image"></i> Image & PDF Tools
+        </button>
+        <button class="drawer-link" data-view="budget">
+          <i data-lucide="wallet"></i> Budget Planner
+        </button>
+        <button class="drawer-link" data-view="calculators">
+          <i data-lucide="calculator"></i> Daily Calculators
+        </button>
+        <div class="drawer-pro-box">
+          <div class="pro-box-header">
+            <i data-lucide="sparkles"></i>
+            <strong>DailyMate Pro</strong>
+          </div>
+          <p>Remove all ads and unlock 1024px QR exports & advanced analytics.</p>
+          <button class="btn btn-primary btn-sm btn-pro-trigger">View Pro Features</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- MAIN APPLICATION VIEWS CONTAINER          -->
+  <!-- ========================================== -->
+  <main class="app-main container">
+
+    <!-- ======================================== -->
+    <!-- VIEW 1: HOME / DASHBOARD HUB            -->
+    <!-- ======================================== -->
+    <section id="view-home" class="app-view active">
+      <!-- Hero Banner -->
+      <div class="hero-section">
+        <div class="hero-badge">
+          <i data-lucide="shield-check"></i>
+          <span>100% Client-Side • Private & Secure • Zero Data Uploads</span>
+        </div>
+        <h1 class="hero-title">
+          Everyday Utilities, <span class="gradient-text">Streamlined</span>.
+        </h1>
+        <p class="hero-description">
+          Generate custom QR codes, resize & compress images, build PDFs, track your monthly budget, and solve everyday math — all in one modern, lightning-fast dashboard.
+        </p>
+
+        <!-- Search Bar with Instant Filter -->
+        <div class="hero-search-wrapper">
+          <div class="search-input-box">
+            <i data-lucide="search" class="search-box-icon"></i>
+            <input type="text" id="home-search-input" placeholder="Search any tool (e.g., 'QR', 'Compress', 'EMI', 'Budget', 'BMI', 'PDF')...">
+            <button id="home-search-clear" class="btn-clear hidden" aria-label="Clear Search">
+              <i data-lucide="x"></i>
+            </button>
+          </div>
+          <!-- Quick Filter Category Chips -->
+          <div class="filter-chips" id="filter-chips">
+            <button class="chip active" data-filter="all">All Tools</button>
+            <button class="chip" data-filter="qr">QR Studio</button>
+            <button class="chip" data-filter="image-pdf">Image & PDF</button>
+            <button class="chip" data-filter="budget">Budget</button>
+            <button class="chip" data-filter="finance">Finance Calcs</button>
+            <button class="chip" data-filter="health">Health Calcs</button>
+            <button class="chip" data-filter="utility">Daily Tools</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Pro Status Alert Bar (Hidden when not simulated) -->
+      <div id="pro-status-banner" class="pro-status-banner hidden">
+        <div class="pro-banner-inner">
+          <div class="pro-banner-info">
+            <span class="pro-icon-sparkle">👑</span>
+            <div>
+              <strong>DailyMate Pro is Active</strong>
+              <p>Ads are hidden, 1024px exports are unlocked, and premium features are enabled.</p>
+            </div>
+          </div>
+          <button id="btn-toggle-pro-quick" class="btn btn-outline btn-sm">Switch to Free Tier</button>
+        </div>
+      </div>
+
+      <!-- Tools Grid -->
+      <div class="tools-grid-heading">
+        <h2>Available Utilities</h2>
+        <span class="tools-count-badge" id="tools-count">12 Tools Available</span>
+      </div>
+
+      <div class="tools-grid" id="tools-cards-grid">
+        <!-- Card 1: QR Generator -->
+        <article class="tool-card" data-category="qr" data-keywords="qr code wifi vcard link url generator barcode">
+          <div class="tool-card-header">
+            <div class="tool-icon-box qr-color">
+              <i data-lucide="qr-code"></i>
+            </div>
+            <div class="tool-badges">
+              <span class="badge badge-free">Free</span>
+              <span class="badge badge-pro-feature">HD Pro</span>
+            </div>
+          </div>
+          <h3 class="tool-title">QR Code Studio</h3>
+          <p class="tool-desc">Create custom high-resolution QR codes for websites, Wi-Fi networks, vCards, SMS, and emails with custom colors and logo stamping.</p>
+          <div class="tool-card-footer">
+            <span class="tool-feature-tag">PNG, SVG & Print</span>
+            <button class="btn btn-primary btn-sm switch-view-btn" data-view="qr">Open Tool <i data-lucide="arrow-right"></i></button>
+          </div>
+        </article>
+
+        <!-- Card 2: Image Compressor & Resizer -->
+        <article class="tool-card" data-category="image-pdf" data-keywords="image resize compress optimize shrink photo jpg png webp">
+          <div class="tool-card-header">
+            <div class="tool-icon-box image-color">
+              <i data-lucide="image"></i>
+            </div>
+            <div class="tool-badges">
+              <span class="badge badge-free">Free</span>
+            </div>
+          </div>
+          <h3 class="tool-title">Image Resizer & Compressor</h3>
+          <p class="tool-desc">Compress JPG, PNG & WebP images up to 80% without visible loss. Resize to custom dimensions or standard percentage presets.</p>
+          <div class="tool-card-footer">
+            <span class="tool-feature-tag">Instant Client-side</span>
+            <button class="btn btn-primary btn-sm switch-view-btn" data-view="image-pdf" data-subtab="resizer">Open Tool <i data-lucide="arrow-right"></i></button>
+          </div>
+        </article>
+
+        <!-- Card 3: Image Filters & Effects -->
+        <article class="tool-card" data-category="image-pdf" data-keywords="photo edit filter rotate flip brightness contrast vintage invert">
+          <div class="tool-card-header">
+            <div class="tool-icon-box filter-color">
+              <i data-lucide="sliders"></i>
+            </div>
+            <div class="tool-badges">
+              <span class="badge badge-free">Free</span>
+            </div>
+          </div>
+          <h3 class="tool-title">Image Filters & Transform</h3>
+          <p class="tool-desc">Rotate, flip, and apply real-time photographic filters: Vintage, Grayscale, Sepia, Saturation, Contrast, and Blur.</p>
+          <div class="tool-card-footer">
+            <span class="tool-feature-tag">Canvas Studio</span>
+            <button class="btn btn-primary btn-sm switch-view-btn" data-view="image-pdf" data-subtab="filters">Open Tool <i data-lucide="arrow-right"></i></button>
+          </div>
+        </article>
+
+        <!-- Card 4: Images to PDF Converter -->
+        <article class="tool-card" data-category="image-pdf" data-keywords="pdf convert image to pdf photos document pictures">
+          <div class="tool-card-header">
+            <div class="tool-icon-box pdf-color">
+              <i data-lucide="file-text"></i>
+            </div>
+            <div class="tool-badges">
+              <span class="badge badge-free">Free</span>
+              <span class="badge badge-popular">Popular</span>
+            </div>
+          </div>
+          <h3 class="tool-title">Images to PDF Maker</h3>
+          <p class="tool-desc">Merge multiple photos into a clean, professional PDF document. Reorder pages, select A4 or Letter, and customize margins.</p>
+          <div class="tool-card-footer">
+            <span class="tool-feature-tag">Multi-Page PDF</span>
+            <button class="btn btn-primary btn-sm switch-view-btn" data-view="image-pdf" data-subtab="img-to-pdf">Open Tool <i data-lucide="arrow-right"></i></button>
+          </div>
+        </article>
+
+        <!-- Card 5: Note / Document PDF Maker -->
+        <article class="tool-card" data-category="image-pdf" data-keywords="note memo invoice text pdf export receipt print">
+          <div class="tool-card-header">
+            <div class="tool-icon-box doc-color">
+              <i data-lucide="file-edit"></i>
+            </div>
+            <div class="tool-badges">
+              <span class="badge badge-free">Free</span>
+            </div>
+          </div>
+          <h3 class="tool-title">Text Note to PDF</h3>
+          <p class="tool-desc">Type memos, meeting notes, invoices or agreements and export cleanly formatted PDF documents with custom titles and dates.</p>
+          <div class="tool-card-footer">
+            <span class="tool-feature-tag">Print Ready</span>
+            <button class="btn btn-primary btn-sm switch-view-btn" data-view="image-pdf" data-subtab="note-pdf">Open Tool <i data-lucide="arrow-right"></i></button>
+          </div>
+        </article>
+
+        <!-- Card 6: Budget Planner -->
+        <article class="tool-card" data-category="budget" data-keywords="budget money expense income tracker finance cash savings chart">
+          <div class="tool-card-header">
+            <div class="tool-icon-box budget-color">
+              <i data-lucide="wallet"></i>
+            </div>
+            <div class="tool-badges">
+              <span class="badge badge-free">Free</span>
+              <span class="badge badge-popular">Popular</span>
+            </div>
+          </div>
+          <h3 class="tool-title">Personal Budget Planner</h3>
+          <p class="tool-desc">Track income and spending, monitor savings rate, set monthly caps with threshold alerts, and visualize category breakdowns with charts.</p>
+          <div class="tool-card-footer">
+            <span class="tool-feature-tag">CSV & JSON Export</span>
+            <button class="btn btn-primary btn-sm switch-view-btn" data-view="budget">Open Tool <i data-lucide="arrow-right"></i></button>
+          </div>
+        </article>
+
+        <!-- Card 7: Loan & EMI Calculator -->
+        <article class="tool-card" data-category="finance" data-keywords="loan emi mortgage interest payment installment finance calculator">
+          <div class="tool-card-header">
+            <div class="tool-icon-box calc-color">
+              <i data-lucide="landmark"></i>
+            </div>
+            <div class="tool-badges">
+              <span class="badge badge-free">Free</span>
+            </div>
+          </div>
+          <h3 class="tool-title">Loan & EMI Calculator</h3>
+          <p class="tool-desc">Compute monthly installment payments, total interest payable, principal-to-interest split bar, and yearly payment breakdowns.</p>
+          <div class="tool-card-footer">
+            <span class="tool-feature-tag">Amortization Table</span>
+            <button class="btn btn-primary btn-sm switch-view-btn" data-view="calculators" data-subtab="emi">Open Tool <i data-lucide="arrow-right"></i></button>
+          </div>
+        </article>
+
+        <!-- Card 8: Tip & Bill Splitter -->
+        <article class="tool-card" data-category="finance" data-keywords="tip bill split restaurant dining food share finance calculator">
+          <div class="tool-card-header">
+            <div class="tool-icon-box calc-color">
+              <i data-lucide="receipt"></i>
+            </div>
+            <div class="tool-badges">
+              <span class="badge badge-free">Free</span>
+            </div>
+          </div>
+          <h3 class="tool-title">Tip & Bill Splitter</h3>
+          <p class="tool-desc">Easily calculate restaurant tips, split the bill evenly among friends, and see exact per-person costs with custom gratuity options.</p>
+          <div class="tool-card-footer">
+            <span class="tool-feature-tag">Instant Split</span>
+            <button class="btn btn-primary btn-sm switch-view-btn" data-view="calculators" data-subtab="tip">Open Tool <i data-lucide="arrow-right"></i></button>
+          </div>
+        </article>
+
+        <!-- Card 9: Discount & Sales Tax -->
+        <article class="tool-card" data-category="finance" data-keywords="discount sales tax price promo shopping percentage save">
+          <div class="tool-card-header">
+            <div class="tool-icon-box calc-color">
+              <i data-lucide="tag"></i>
+            </div>
+            <div class="tool-badges">
+              <span class="badge badge-free">Free</span>
+            </div>
+          </div>
+          <h3 class="tool-title">Discount & Sales Tax Calculator</h3>
+          <p class="tool-desc">Find final prices after discounts and sales taxes. Quickly calculate your total savings on seasonal promotions.</p>
+          <div class="tool-card-footer">
+            <span class="tool-feature-tag">Shopping Assistant</span>
+            <button class="btn btn-primary btn-sm switch-view-btn" data-view="calculators" data-subtab="discount">Open Tool <i data-lucide="arrow-right"></i></button>
+          </div>
+        </article>
+
+        <!-- Card 10: Health Suite (BMI, Water & Calorie) -->
+        <article class="tool-card" data-category="health" data-keywords="bmi health weight water intake hydration calorie tdee bmr fitness">
+          <div class="tool-card-header">
+            <div class="tool-icon-box health-color">
+              <i data-lucide="activity"></i>
+            </div>
+            <div class="tool-badges">
+              <span class="badge badge-free">Free</span>
+              <span class="badge badge-popular">Popular</span>
+            </div>
+          </div>
+          <h3 class="tool-title">Health Hub (BMI & Hydration)</h3>
+          <p class="tool-desc">Measure Body Mass Index with interactive color gauge, calculate daily water goals with interactive cup logger, and find TDEE calories.</p>
+          <div class="tool-card-footer">
+            <span class="tool-feature-tag">Metric & Imperial</span>
+            <button class="btn btn-primary btn-sm switch-view-btn" data-view="calculators" data-subtab="health">Open Tool <i data-lucide="arrow-right"></i></button>
+          </div>
+        </article>
+
+        <!-- Card 11: Age & Date Difference -->
+        <article class="tool-card" data-category="utility" data-keywords="age date difference birthday time years days hours minutes calendar">
+          <div class="tool-card-header">
+            <div class="tool-icon-box util-color">
+              <i data-lucide="calendar"></i>
+            </div>
+            <div class="tool-badges">
+              <span class="badge badge-free">Free</span>
+            </div>
+          </div>
+          <h3 class="tool-title">Age & Date Difference</h3>
+          <p class="tool-desc">Find your exact chronological age in years, months, days, and total hours, plus days remaining until your next birthday milestone.</p>
+          <div class="tool-card-footer">
+            <span class="tool-feature-tag">Countdown Included</span>
+            <button class="btn btn-primary btn-sm switch-view-btn" data-view="calculators" data-subtab="date">Open Tool <i data-lucide="arrow-right"></i></button>
+          </div>
+        </article>
+
+        <!-- Card 12: Unit Converter & Password Generator -->
+        <article class="tool-card" data-category="utility" data-keywords="unit convert length weight temp password generate security keys">
+          <div class="tool-card-header">
+            <div class="tool-icon-box util-color">
+              <i data-lucide="shield"></i>
+            </div>
+            <div class="tool-badges">
+              <span class="badge badge-free">Free</span>
+            </div>
+          </div>
+          <h3 class="tool-title">Unit Converter & Password Gen</h3>
+          <p class="tool-desc">Convert units of length, weight, speed, and temperature, or generate cryptographically secure passwords with entropy meter.</p>
+          <div class="tool-card-footer">
+            <span class="tool-feature-tag">Multi-Utility</span>
+            <button class="btn btn-primary btn-sm switch-view-btn" data-view="calculators" data-subtab="utility">Open Tool <i data-lucide="arrow-right"></i></button>
+          </div>
+        </article>
+      </div>
+
+      <!-- Mid-page Sponsored Ad Unit (Free Tier) -->
+      <div class="card-ad free-ad">
+        <div class="card-ad-content">
+          <span class="ad-badge">SPONSORED</span>
+          <div class="card-ad-text">
+            <h4>Protect Your Digital Privacy with NordPass</h4>
+            <p>Generate, store and autofill complex passwords securely across all your browsers and mobile devices.</p>
+          </div>
+          <button class="btn btn-outline btn-sm btn-pro-trigger">Remove Ads with Pro</button>
+        </div>
+      </div>
+
+      <!-- Trust & Privacy Feature Strip -->
+      <div class="features-strip">
+        <div class="feature-item">
+          <div class="feature-icon"><i data-lucide="lock"></i></div>
+          <div>
+            <h4>100% Client-Side Privacy</h4>
+            <p>Your images, PDFs, budgets, and QR inputs never leave your device.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon"><i data-lucide="zap"></i></div>
+          <div>
+            <h4>Blazing Fast Execution</h4>
+            <p>Instant processing powered by modern browser canvas & Web APIs.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon"><i data-lucide="hard-drive"></i></div>
+          <div>
+            <h4>Local Persistence</h4>
+            <p>Budgets and QR history stay securely saved in your browser storage.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================== -->
+    <!-- VIEW 2: QR CODE GENERATOR STUDIO        -->
+    <!-- ======================================== -->
+    <section id="view-qr" class="app-view">
+      <div class="view-header">
+        <div>
+          <h2 class="view-title">QR Code Studio</h2>
+          <p class="view-subtitle">Generate custom, scan-guaranteed QR codes for URLs, Wi-Fi credentials, business cards, and messages.</p>
+        </div>
+        <div class="view-badges">
+          <span class="badge badge-free">Free Standard</span>
+          <span class="badge badge-pro-feature">Pro 1024px Ultra HD</span>
+        </div>
+      </div>
+
+      <div class="qr-studio-layout">
+        <!-- Configuration Panel (Left) -->
+        <div class="card studio-panel">
+          <div class="card-header">
+            <h3>1. Select Content Type</h3>
+          </div>
+
+          <!-- QR Type Switcher -->
+          <div class="qr-type-selector" id="qr-type-selector">
+            <button class="qr-type-btn active" data-type="url">
+              <i data-lucide="link"></i> URL / Link
+            </button>
+            <button class="qr-type-btn" data-type="text">
+              <i data-lucide="file-text"></i> Plain Text
+            </button>
+            <button class="qr-type-btn" data-type="wifi">
+              <i data-lucide="wifi"></i> Wi-Fi Network
+            </button>
+            <button class="qr-type-btn" data-type="vcard">
+              <i data-lucide="user"></i> vCard Contact
+            </button>
+            <button class="qr-type-btn" data-type="email">
+              <i data-lucide="mail"></i> Email
+            </button>
+            <button class="qr-type-btn" data-type="sms">
+              <i data-lucide="message-square"></i> SMS / Text
+            </button>
+          </div>
+
+          <!-- Dynamic Form Inputs -->
+          <div class="qr-form-container">
+            <!-- URL Form -->
+            <div id="qr-form-url" class="qr-form-group active">
+              <label for="qr-input-url" class="form-label">Website URL or Link</label>
+              <div class="input-with-icon">
+                <i data-lucide="globe"></i>
+                <input type="url" id="qr-input-url" class="form-input" placeholder="https://example.com" value="https://dailymate.app">
+              </div>
+              <small class="form-hint">Tip: Include https:// so phones automatically open the browser.</small>
+            </div>
+
+            <!-- Plain Text Form -->
+            <div id="qr-form-text" class="qr-form-group">
+              <label for="qr-input-text" class="form-label">Plain Text Message</label>
+              <textarea id="qr-input-text" class="form-input form-textarea" rows="3" placeholder="Enter any text, code, or secret message..."></textarea>
+            </div>
+
+            <!-- Wi-Fi Form -->
+            <div id="qr-form-wifi" class="qr-form-group">
+              <div class="form-row">
+                <div class="form-col">
+                  <label for="qr-wifi-ssid" class="form-label">Network Name (SSID)</label>
+                  <input type="text" id="qr-wifi-ssid" class="form-input" placeholder="Home_WiFi_5G">
+                </div>
+                <div class="form-col">
+                  <label for="qr-wifi-type" class="form-label">Encryption</label>
+                  <select id="qr-wifi-type" class="form-input">
+                    <option value="WPA">WPA / WPA2 / WPA3 (Standard)</option>
+                    <option value="WEP">WEP (Older)</option>
+                    <option value="nopass">None (Open Network)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-col">
+                  <label for="qr-wifi-pass" class="form-label">Wi-Fi Password</label>
+                  <input type="password" id="qr-wifi-pass" class="form-input" placeholder="Enter Wi-Fi password">
+                </div>
+                <div class="form-col flex-center-vertically">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="qr-wifi-hidden">
+                    <span>Hidden SSID</span>
+                  </label>
+                </div>
+              </div>
+              <small class="form-hint">Guests can scan this QR code with their camera to connect instantly without typing passwords.</small>
+            </div>
+
+            <!-- vCard Form -->
+            <div id="qr-form-vcard" class="qr-form-group">
+              <div class="form-row">
+                <div class="form-col">
+                  <label for="qr-vcard-fn" class="form-label">First Name</label>
+                  <input type="text" id="qr-vcard-fn" class="form-input" placeholder="John">
+                </div>
+                <div class="form-col">
+                  <label for="qr-vcard-ln" class="form-label">Last Name</label>
+                  <input type="text" id="qr-vcard-ln" class="form-input" placeholder="Doe">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-col">
+                  <label for="qr-vcard-phone" class="form-label">Mobile Phone</label>
+                  <input type="tel" id="qr-vcard-phone" class="form-input" placeholder="+1 (555) 123-4567">
+                </div>
+                <div class="form-col">
+                  <label for="qr-vcard-email" class="form-label">Email Address</label>
+                  <input type="email" id="qr-vcard-email" class="form-input" placeholder="john.doe@company.com">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-col">
+                  <label for="qr-vcard-org" class="form-label">Company / Organization</label>
+                  <input type="text" id="qr-vcard-org" class="form-input" placeholder="Acme Inc.">
+                </div>
+                <div class="form-col">
+                  <label for="qr-vcard-title" class="form-label">Job Title</label>
+                  <input type="text" id="qr-vcard-title" class="form-input" placeholder="Product Lead">
+                </div>
+              </div>
+            </div>
+
+            <!-- Email Form -->
+            <div id="qr-form-email" class="qr-form-group">
+              <label for="qr-email-addr" class="form-label">Recipient Email</label>
+              <input type="email" id="qr-email-addr" class="form-input" placeholder="hello@company.com">
+              <div class="form-row">
+                <div class="form-col">
+                  <label for="qr-email-sub" class="form-label">Subject</label>
+                  <input type="text" id="qr-email-sub" class="form-input" placeholder="Feedback or Inquiry">
+                </div>
+              </div>
+              <label for="qr-email-body" class="form-label">Email Message</label>
+              <textarea id="qr-email-body" class="form-input form-textarea" rows="2" placeholder="Pre-filled email body..."></textarea>
+            </div>
+
+            <!-- SMS Form -->
+            <div id="qr-form-sms" class="qr-form-group">
+              <label for="qr-sms-phone" class="form-label">Phone Number</label>
+              <input type="tel" id="qr-sms-phone" class="form-input" placeholder="+1 (555) 000-0000">
+              <label for="qr-sms-msg" class="form-label">SMS Message</label>
+              <textarea id="qr-sms-msg" class="form-input form-textarea" rows="2" placeholder="Send this message to confirm my booking..."></textarea>
+            </div>
+          </div>
+
+          <!-- QR Customization Styling -->
+          <div class="card-section-divider"></div>
+          <div class="card-header">
+            <h3>2. Customize Colors & Quality</h3>
+          </div>
+
+          <div class="qr-style-grid">
+            <!-- Foreground Color -->
+            <div class="style-item">
+              <label for="qr-color-fg" class="form-label">QR Code Color</label>
+              <div class="color-picker-wrapper">
+                <input type="color" id="qr-color-fg" value="#0f172a" class="color-input">
+                <span id="qr-color-fg-val" class="color-val-hex">#0f172a</span>
+              </div>
+              <div class="color-presets" id="fg-presets">
+                <button type="button" class="swatch" style="background: #0f172a" data-color="#0f172a" title="Midnight Slate"></button>
+                <button type="button" class="swatch" style="background: #4f46e5" data-color="#4f46e5" title="Indigo"></button>
+                <button type="button" class="swatch" style="background: #059669" data-color="#059669" title="Emerald"></button>
+                <button type="button" class="swatch" style="background: #dc2626" data-color="#dc2626" title="Ruby"></button>
+                <button type="button" class="swatch" style="background: #7c3aed" data-color="#7c3aed" title="Purple"></button>
+              </div>
+            </div>
+
+            <!-- Background Color -->
+            <div class="style-item">
+              <label for="qr-color-bg" class="form-label">Background Color</label>
+              <div class="color-picker-wrapper">
+                <input type="color" id="qr-color-bg" value="#ffffff" class="color-input">
+                <span id="qr-color-bg-val" class="color-val-hex">#ffffff</span>
+              </div>
+              <div class="color-presets" id="bg-presets">
+                <button type="button" class="swatch" style="background: #ffffff; border: 1px solid #cbd5e1;" data-color="#ffffff" title="Pure White"></button>
+                <button type="button" class="swatch" style="background: #f8fafc" data-color="#f8fafc" title="Soft Slate"></button>
+                <button type="button" class="swatch" style="background: #fef3c7" data-color="#fef3c7" title="Warm Amber"></button>
+                <button type="button" class="swatch" style="background: #e0f2fe" data-color="#e0f2fe" title="Sky Blue"></button>
+              </div>
+            </div>
+
+            <!-- Resolution / Size -->
+            <div class="style-item">
+              <label for="qr-size-select" class="form-label">Output Resolution</label>
+              <select id="qr-size-select" class="form-input">
+                <option value="256">256 x 256 px (Standard Web - Free)</option>
+                <option value="512" selected>512 x 512 px (High Res - Free)</option>
+                <option value="1024">1024 x 1024 px (Ultra HD Vector - PRO 👑)</option>
+              </select>
+            </div>
+
+            <!-- Error Correction -->
+            <div class="style-item">
+              <label for="qr-ecc-select" class="form-label">Error Correction Level</label>
+              <select id="qr-ecc-select" class="form-input">
+                <option value="L">L - 7% damage recovery</option>
+                <option value="M" selected>M - 15% recovery (Standard)</option>
+                <option value="Q">Q - 25% recovery (Recommended)</option>
+                <option value="H">H - 30% recovery (Best for Logos)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Pro Feature: Center Logo / Badge Stamp -->
+          <div class="pro-feature-box">
+            <div class="pro-feature-header">
+              <div class="pro-tag">PRO FEATURE</div>
+              <span class="pro-title">Center Logo / Icon Stamp</span>
+            </div>
+            <p class="pro-desc">Stamp your custom logo, brand mark, or emoji into the center of the QR code with automatic damage recovery.</p>
+            <div class="pro-logo-controls">
+              <input type="text" id="qr-center-text" class="form-input form-input-sm" placeholder="Emoji or 2-letter stamp (e.g. ⚡, DM, 🚀)" maxlength="4">
+              <button id="btn-apply-logo" class="btn btn-secondary btn-sm">Apply Stamp</button>
+            </div>
+          </div>
+
+          <!-- Generate Action Button -->
+          <div class="panel-action">
+            <button id="btn-generate-qr" class="btn btn-primary btn-block">
+              <i data-lucide="refresh-cw"></i> Refresh QR Code
+            </button>
+          </div>
+        </div>
+
+        <!-- Preview & Output Panel (Right) -->
+        <div class="card studio-preview-panel">
+          <div class="card-header">
+            <h3>Live QR Code Preview</h3>
+            <span class="badge badge-success" id="qr-status-badge">Ready to Scan</span>
+          </div>
+
+          <!-- Canvas Preview Stage -->
+          <div class="qr-canvas-stage">
+            <div id="qr-canvas-wrapper" class="qr-canvas-box">
+              <div id="qrcode-target"></div>
+              <canvas id="qr-master-canvas" class="hidden"></canvas>
+            </div>
+          </div>
+
+          <div class="qr-meta-info" id="qr-meta-info">
+            <span>Size: <strong id="qr-meta-size">512 × 512 px</strong></span>
+            <span>Type: <strong id="qr-meta-type">URL</strong></span>
+            <span>ECC: <strong id="qr-meta-ecc">Level M</strong></span>
+          </div>
+
+          <!-- Download Action Bar -->
+          <div class="qr-actions-grid">
+            <button id="btn-download-qr-png" class="btn btn-primary">
+              <i data-lucide="download"></i> Download PNG
+            </button>
+            <button id="btn-download-qr-svg" class="btn btn-secondary">
+              <i data-lucide="file-code"></i> Download SVG
+            </button>
+            <button id="btn-copy-qr-img" class="btn btn-outline">
+              <i data-lucide="copy"></i> Copy to Clipboard
+            </button>
+            <button id="btn-print-qr" class="btn btn-outline">
+              <i data-lucide="printer"></i> Print Code
+            </button>
+          </div>
+
+          <!-- Scan Test Notice -->
+          <div class="scan-notice">
+            <i data-lucide="camera"></i>
+            <span>Point your phone camera or QR scanner at the screen to test immediately.</span>
+          </div>
+
+          <!-- Recent QR History -->
+          <div class="card-section-divider"></div>
+          <div class="qr-history-section">
+            <div class="history-header">
+              <h4>Recent QR Codes</h4>
+              <button id="btn-clear-qr-history" class="btn-text btn-sm">Clear History</button>
+            </div>
+            <div id="qr-history-list" class="history-list">
+              <p class="empty-state">No saved QR codes yet. Generated codes will be stored locally.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================== -->
+    <!-- VIEW 3: IMAGE & PDF STUDIO               -->
+    <!-- ======================================== -->
+    <section id="view-image-pdf" class="app-view">
+      <div class="view-header">
+        <div>
+          <h2 class="view-title">Image & PDF Studio</h2>
+          <p class="view-subtitle">Resize, compress, apply filters, and convert images to PDF completely client-side in high quality.</p>
+        </div>
+        <div class="view-badges">
+          <span class="badge badge-free">Free Unlimited</span>
+          <span class="badge badge-info">100% Client-Side</span>
+        </div>
+      </div>
+
+      <!-- Studio Sub-Navigation -->
+      <div class="sub-nav-tabs">
+        <button class="sub-tab-btn active" data-subtab="resizer">
+          <i data-lucide="minimize-2"></i> Image Resizer & Compressor
+        </button>
+        <button class="sub-tab-btn" data-subtab="filters">
+          <i data-lucide="sliders"></i> Image Filters & Effects
+        </button>
+        <button class="sub-tab-btn" data-subtab="img-to-pdf">
+          <i data-lucide="file-text"></i> Images to PDF Maker
+        </button>
+        <button class="sub-tab-btn" data-subtab="note-pdf">
+          <i data-lucide="file-edit"></i> Note to PDF Generator
+        </button>
+      </div>
+
+      <!-- SUB-TAB 1: RESIZER & COMPRESSOR -->
+      <div id="subtab-resizer" class="subtab-content active">
+        <!-- Upload Drop Zone -->
+        <div id="img-dropzone" class="dropzone">
+          <input type="file" id="img-file-input" accept="image/png, image/jpeg, image/webp, image/gif" class="file-input-hidden">
+          <div class="dropzone-content">
+            <div class="dropzone-icon-box">
+              <i data-lucide="upload-cloud"></i>
+            </div>
+            <h3>Drag & Drop your image here, or <span class="text-primary clickable">browse files</span></h3>
+            <p>Supports PNG, JPG, JPEG, and WebP up to 25MB. Instant browser processing.</p>
+          </div>
+        </div>
+
+        <!-- Tool Configuration & Preview Area (Visible after upload) -->
+        <div id="img-editor-area" class="img-editor-grid hidden">
+          <!-- Left: Controls -->
+          <div class="card editor-controls-card">
+            <div class="card-header">
+              <h3>Image Optimization Settings</h3>
+              <button id="btn-change-image" class="btn-text btn-sm">Change Image</button>
+            </div>
+
+            <!-- Dimensions -->
+            <div class="control-group">
+              <label class="form-label">Dimensions (Pixels)</label>
+              <div class="form-row">
+                <div class="form-col">
+                  <div class="input-with-label">
+                    <span>W</span>
+                    <input type="number" id="img-width-input" class="form-input" min="10" max="10000">
+                  </div>
+                </div>
+                <button id="btn-aspect-lock" class="btn-icon active" title="Lock Aspect Ratio">
+                  <i data-lucide="link"></i>
+                </button>
+                <div class="form-col">
+                  <div class="input-with-label">
+                    <span>H</span>
+                    <input type="number" id="img-height-input" class="form-input" min="10" max="10000">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Preset percentage buttons -->
+              <div class="dimension-presets">
+                <button type="button" class="btn-preset" data-scale="0.25">25%</button>
+                <button type="button" class="btn-preset" data-scale="0.5">50%</button>
+                <button type="button" class="btn-preset" data-scale="0.75">75%</button>
+                <button type="button" class="btn-preset active" data-scale="1.0">100% (Original)</button>
+                <button type="button" class="btn-preset" data-scale="1.5">150%</button>
+              </div>
+            </div>
+
+            <!-- Format & Quality -->
+            <div class="control-group">
+              <label for="img-format-select" class="form-label">Target Format</label>
+              <select id="img-format-select" class="form-input">
+                <option value="image/jpeg">JPEG (.jpg) - Best for Photos</option>
+                <option value="image/png">PNG (.png) - Lossless with Transparency</option>
+                <option value="image/webp">WebP (.webp) - Maximum Compression</option>
+              </select>
+            </div>
+
+            <!-- Compression Quality Slider -->
+            <div class="control-group" id="quality-slider-group">
+              <div class="slider-header">
+                <label for="img-quality-slider" class="form-label">Compression Quality</label>
+                <span id="img-quality-val" class="slider-val">80%</span>
+              </div>
+              <input type="range" id="img-quality-slider" min="10" max="100" value="80" class="form-range">
+              <div class="slider-ticks">
+                <span>Smaller File</span>
+                <span>Balanced</span>
+                <span>Best Quality</span>
+              </div>
+            </div>
+
+            <!-- Live Size Comparison Card -->
+            <div class="size-comparison-card">
+              <div class="size-box">
+                <span class="size-label">Original Size</span>
+                <span class="size-val" id="size-original">0 KB</span>
+              </div>
+              <div class="size-arrow"><i data-lucide="arrow-right"></i></div>
+              <div class="size-box">
+                <span class="size-label">Estimated Output</span>
+                <span class="size-val text-success" id="size-output">0 KB</span>
+              </div>
+              <div class="size-badge" id="size-savings-badge">-0% Saved</div>
+            </div>
+
+            <!-- Download Button -->
+            <button id="btn-download-processed-img" class="btn btn-primary btn-block">
+              <i data-lucide="download"></i> Download Optimized Image
+            </button>
+          </div>
+
+          <!-- Right: Visual Preview Stage -->
+          <div class="card editor-preview-card">
+            <div class="card-header">
+              <h3>Real-Time Preview</h3>
+              <span class="preview-dim-badge" id="preview-dim-badge">0 × 0 px</span>
+            </div>
+            <div class="image-preview-stage">
+              <img id="img-preview-target" alt="Preview Image" src="">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-TAB 2: FILTERS & EFFECTS -->
+      <div id="subtab-filters" class="subtab-content">
+        <div id="filter-dropzone" class="dropzone">
+          <input type="file" id="filter-file-input" accept="image/*" class="file-input-hidden">
+          <div class="dropzone-content">
+            <div class="dropzone-icon-box">
+              <i data-lucide="sliders"></i>
+            </div>
+            <h3>Upload an image to apply filters, or <span class="text-primary clickable">browse</span></h3>
+            <p>Enhance photos with vintage, contrast, rotation, and artistic filters.</p>
+          </div>
+        </div>
+
+        <div id="filter-editor-area" class="img-editor-grid hidden">
+          <!-- Controls Panel -->
+          <div class="card editor-controls-card">
+            <div class="card-header">
+              <h3>Transform & Color Adjustments</h3>
+              <button id="btn-reset-filters" class="btn-text btn-sm">Reset All</button>
+            </div>
+
+            <!-- Transform Buttons -->
+            <div class="control-group">
+              <label class="form-label">Orientation & Flip</label>
+              <div class="btn-group-row">
+                <button id="btn-rot-left" class="btn btn-outline btn-sm" title="Rotate Left 90°">
+                  <i data-lucide="rotate-ccw"></i> Rotate 90°L
+                </button>
+                <button id="btn-rot-right" class="btn btn-outline btn-sm" title="Rotate Right 90°">
+                  <i data-lucide="rotate-cw"></i> Rotate 90°R
+                </button>
+                <button id="btn-flip-h" class="btn btn-outline btn-sm" title="Flip Horizontal">
+                  <i data-lucide="flip-horizontal"></i> Flip H
+                </button>
+                <button id="btn-flip-v" class="btn btn-outline btn-sm" title="Flip Vertical">
+                  <i data-lucide="flip-vertical"></i> Flip V
+                </button>
+              </div>
+            </div>
+
+            <!-- Instant Filter Presets -->
+            <div class="control-group">
+              <label class="form-label">Quick Photographic Presets</label>
+              <div class="filter-presets-grid">
+                <button class="preset-btn" data-preset="normal">Normal</button>
+                <button class="preset-btn" data-preset="vintage">Vintage 1970</button>
+                <button class="preset-btn" data-preset="noir">B&W Noir</button>
+                <button class="preset-btn" data-preset="vibrant">Vivid Color</button>
+                <button class="preset-btn" data-preset="warm">Golden Hour</button>
+                <button class="preset-btn" data-preset="cool">Nordic Cool</button>
+                <button class="preset-btn" data-preset="dramatic">Dramatic Hi-Con</button>
+                <button class="preset-btn" data-preset="invert">Inverted X-Ray</button>
+              </div>
+            </div>
+
+            <!-- Fine-Tuning Sliders -->
+            <div class="control-group">
+              <div class="slider-header">
+                <label for="slider-brightness" class="form-label">Brightness</label>
+                <span id="val-brightness" class="slider-val">100%</span>
+              </div>
+              <input type="range" id="slider-brightness" min="0" max="200" value="100" class="form-range">
+
+              <div class="slider-header">
+                <label for="slider-contrast" class="form-label">Contrast</label>
+                <span id="val-contrast" class="slider-val">100%</span>
+              </div>
+              <input type="range" id="slider-contrast" min="0" max="200" value="100" class="form-range">
+
+              <div class="slider-header">
+                <label for="slider-saturation" class="form-label">Saturation</label>
+                <span id="val-saturation" class="slider-val">100%</span>
+              </div>
+              <input type="range" id="slider-saturation" min="0" max="200" value="100" class="form-range">
+
+              <div class="slider-header">
+                <label for="slider-sepia" class="form-label">Sepia Warmth</label>
+                <span id="val-sepia" class="slider-val">0%</span>
+              </div>
+              <input type="range" id="slider-sepia" min="0" max="100" value="0" class="form-range">
+
+              <div class="slider-header">
+                <label for="slider-blur" class="form-label">Soft Blur</label>
+                <span id="val-blur" class="slider-val">0 px</span>
+              </div>
+              <input type="range" id="slider-blur" min="0" max="10" value="0" class="form-range">
+            </div>
+
+            <!-- Download Button -->
+            <button id="btn-download-filtered-img" class="btn btn-primary btn-block">
+              <i data-lucide="download"></i> Download Filtered Image
+            </button>
+          </div>
+
+          <!-- Preview Panel -->
+          <div class="card editor-preview-card">
+            <div class="card-header">
+              <h3>Live Filter Preview</h3>
+              <button id="btn-change-filter-img" class="btn-text btn-sm">Change Image</button>
+            </div>
+            <div class="image-preview-stage">
+              <img id="filter-preview-img" alt="Filter Preview" src="">
+              <canvas id="filter-canvas-hidden" class="hidden"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-TAB 3: IMAGES TO PDF -->
+      <div id="subtab-img-to-pdf" class="subtab-content">
+        <div class="pdf-maker-layout">
+          <!-- Dropzone and Image list (Left) -->
+          <div class="card pdf-files-card">
+            <div class="card-header">
+              <h3>1. Upload & Organize Pages</h3>
+              <button id="btn-clear-pdf-queue" class="btn-text btn-sm hidden">Clear All</button>
+            </div>
+
+            <div id="pdf-dropzone" class="dropzone dropzone-compact">
+              <input type="file" id="pdf-file-input" accept="image/png, image/jpeg, image/webp" multiple class="file-input-hidden">
+              <div class="dropzone-content">
+                <i data-lucide="images"></i>
+                <p>Drag multiple photos here, or <span class="text-primary clickable">browse to add pages</span></p>
+              </div>
+            </div>
+
+            <!-- Uploaded pages gallery -->
+            <div id="pdf-pages-list" class="pdf-pages-list">
+              <p class="empty-state">No images added yet. Add one or more images to generate a multi-page PDF.</p>
+            </div>
+          </div>
+
+          <!-- PDF Settings & Export (Right) -->
+          <div class="card pdf-settings-card">
+            <div class="card-header">
+              <h3>2. PDF Page Options</h3>
+              <span class="badge badge-success" id="pdf-page-count">0 Pages</span>
+            </div>
+
+            <div class="control-group">
+              <label for="pdf-page-size" class="form-label">Page Format</label>
+              <select id="pdf-page-size" class="form-input">
+                <option value="a4" selected>A4 (210 × 297 mm - Standard)</option>
+                <option value="letter">US Letter (8.5 × 11 in)</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="pdf-orientation" class="form-label">Page Orientation</label>
+              <select id="pdf-orientation" class="form-input">
+                <option value="p" selected>Portrait (Vertical)</option>
+                <option value="l">Landscape (Horizontal)</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="pdf-margin" class="form-label">Page Margins</label>
+              <select id="pdf-margin" class="form-input">
+                <option value="0">Zero Margin (Full Bleed)</option>
+                <option value="10" selected>Small Margin (10 mm)</option>
+                <option value="20">Generous Margin (20 mm)</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="pdf-filename" class="form-label">Output Filename</label>
+              <div class="input-with-label">
+                <input type="text" id="pdf-filename" class="form-input" value="DailyMate-Document">
+                <span>.pdf</span>
+              </div>
+            </div>
+
+            <div class="pro-feature-box">
+              <div class="pro-feature-header">
+                <div class="pro-tag">PRO BENEFIT</div>
+                <span class="pro-title">High DPI Compression</span>
+              </div>
+              <p class="pro-desc">Pro tier includes intelligent photo rasterization for crystal-clear vector printing.</p>
+            </div>
+
+            <button id="btn-build-pdf" class="btn btn-primary btn-block" disabled>
+              <i data-lucide="file-check"></i> Generate & Download PDF
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-TAB 4: NOTE TO PDF -->
+      <div id="subtab-note-pdf" class="subtab-content">
+        <div class="pdf-maker-layout">
+          <!-- Text Editor (Left) -->
+          <div class="card pdf-files-card">
+            <div class="card-header">
+              <h3>Document Editor</h3>
+              <div class="template-selector">
+                <button class="btn-preset btn-sm" id="btn-tpl-invoice">Invoice Template</button>
+                <button class="btn-preset btn-sm" id="btn-tpl-meeting">Meeting Memo</button>
+                <button class="btn-preset btn-sm" id="btn-tpl-blank">Blank</button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label for="note-title" class="form-label">Document Title</label>
+              <input type="text" id="note-title" class="form-input" placeholder="e.g. Official Project Briefing" value="Project Summary & Agreement">
+            </div>
+
+            <div class="form-row">
+              <div class="form-col">
+                <label for="note-author" class="form-label">Author / Organization</label>
+                <input type="text" id="note-author" class="form-input" placeholder="DailyMate User" value="DailyMate Studio">
+              </div>
+              <div class="form-col">
+                <label for="note-date" class="form-label">Document Date</label>
+                <input type="date" id="note-date" class="form-input">
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label for="note-body" class="form-label">Document Content</label>
+              <textarea id="note-body" class="form-input form-textarea" rows="10" placeholder="Type or paste your document notes here...">1. Objective: Deliver clean, high-performance web utilities for everyday tasks.
+
+2. Scope:
+- Instant client-side QR generation for Wi-Fi, contacts, and links.
+- Image compression and multi-image PDF creation.
+- Personal budget tracking with local storage and analytics.
+- Daily financial and health calculators.
+
+3. Guarantee:
+All processes execute inside the browser sandbox. No user data or images are transmitted to external servers.</textarea>
+            </div>
+          </div>
+
+          <!-- Preview & Export (Right) -->
+          <div class="card pdf-settings-card">
+            <div class="card-header">
+              <h3>PDF Preview & Styling</h3>
+            </div>
+
+            <div class="note-paper-preview" id="note-paper-preview">
+              <div class="paper-header">
+                <h4 id="preview-note-title">Project Summary & Agreement</h4>
+                <div class="paper-meta">
+                  <span id="preview-note-author">DailyMate Studio</span> • 
+                  <span id="preview-note-date">Today</span>
+                </div>
+              </div>
+              <div class="paper-divider"></div>
+              <div class="paper-body" id="preview-note-body">
+                Document content preview will render here...
+              </div>
+              <div class="paper-footer">
+                <span>Generated via DailyMate Utility Suite</span>
+                <span>Page 1 of 1</span>
+              </div>
+            </div>
+
+            <button id="btn-download-note-pdf" class="btn btn-primary btn-block">
+              <i data-lucide="download"></i> Download Note as PDF
+            </button>
+            <button id="btn-print-note" class="btn btn-outline btn-block">
+              <i data-lucide="printer"></i> Print Document
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================== -->
+    <!-- VIEW 4: BUDGET PLANNER                  -->
+    <!-- ======================================== -->
+    <section id="view-budget" class="app-view">
+      <div class="view-header">
+        <div>
+          <h2 class="view-title">Personal Budget Planner</h2>
+          <p class="view-subtitle">Track your income & expenses, track savings rate, set monthly spending limits, and visualize category health.</p>
+        </div>
+        <div class="view-actions">
+          <button id="btn-load-demo-budget" class="btn btn-outline btn-sm">
+            <i data-lucide="sparkles"></i> Load Sample Data
+          </button>
+          <button id="btn-export-csv" class="btn btn-outline btn-sm">
+            <i data-lucide="download"></i> Export CSV
+          </button>
+          <button id="btn-open-add-tx" class="btn btn-primary btn-sm">
+            <i data-lucide="plus"></i> Add Transaction
+          </button>
+        </div>
+      </div>
+
+      <!-- Top Summary Metrics Grid -->
+      <div class="budget-metrics-grid">
+        <!-- Metric 1: Total Income -->
+        <div class="metric-card income-metric">
+          <div class="metric-icon"><i data-lucide="trending-up"></i></div>
+          <div class="metric-info">
+            <span class="metric-label">Total Income</span>
+            <span class="metric-val" id="metric-income">$0.00</span>
+          </div>
+        </div>
+
+        <!-- Metric 2: Total Expenses -->
+        <div class="metric-card expense-metric">
+          <div class="metric-icon"><i data-lucide="trending-down"></i></div>
+          <div class="metric-info">
+            <span class="metric-label">Total Expenses</span>
+            <span class="metric-val" id="metric-expenses">$0.00</span>
+          </div>
+        </div>
+
+        <!-- Metric 3: Net Balance / Savings -->
+        <div class="metric-card balance-metric">
+          <div class="metric-icon"><i data-lucide="wallet"></i></div>
+          <div class="metric-info">
+            <span class="metric-label">Net Savings</span>
+            <span class="metric-val" id="metric-balance">$0.00</span>
+          </div>
+        </div>
+
+        <!-- Metric 4: Savings Rate -->
+        <div class="metric-card rate-metric">
+          <div class="metric-icon"><i data-lucide="pie-chart"></i></div>
+          <div class="metric-info">
+            <span class="metric-label">Savings Rate</span>
+            <span class="metric-val" id="metric-savings-rate">0.0%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monthly Spending Limit & Alert Bar -->
+      <div class="card budget-limit-card">
+        <div class="limit-header">
+          <div class="limit-title-wrap">
+            <i data-lucide="target" class="text-primary"></i>
+            <div>
+              <strong>Monthly Spending Cap</strong>
+              <p>Set a threshold to monitor your monthly spending pace.</p>
+            </div>
+          </div>
+          <div class="limit-controls">
+            <span class="limit-currency-symbol">$</span>
+            <input type="number" id="input-budget-limit" class="form-input form-input-sm" value="3000" min="100" step="100">
+            <span class="badge" id="budget-status-pill">On Track</span>
+          </div>
+        </div>
+
+        <!-- Visual Progress Bar -->
+        <div class="budget-progress-track">
+          <div id="budget-progress-fill" class="budget-progress-fill" style="width: 0%;"></div>
+        </div>
+
+        <div class="limit-footer-text">
+          <span>Spent: <strong id="spent-vs-limit">$0.00 of $3,000.00</strong></span>
+          <span id="spent-pct-label">0% of budget</span>
+        </div>
+      </div>
+
+      <!-- Budget Workspace 2-Column Grid -->
+      <div class="budget-workspace-grid">
+        <!-- Left: Interactive Visual Charts & Breakdown -->
+        <div class="card chart-panel-card">
+          <div class="card-header">
+            <h3>Expense Breakdown by Category</h3>
+            <span class="badge badge-info" id="chart-cat-count">0 Categories</span>
+          </div>
+
+          <!-- Canvas Doughnut Chart -->
+          <div class="chart-canvas-wrapper">
+            <canvas id="budget-canvas-chart" width="300" height="300"></canvas>
+            <div class="chart-center-overlay" id="chart-center-overlay">
+              <span class="overlay-label">Total Spent</span>
+              <span class="overlay-value" id="chart-center-value">$0</span>
+            </div>
+          </div>
+
+          <!-- Category Legend Breakdown -->
+          <div class="card-section-divider"></div>
+          <h4>Category Breakdown</h4>
+          <div id="category-legend-list" class="category-legend-list">
+            <p class="empty-state">No expense transactions recorded yet.</p>
+          </div>
+        </div>
+
+        <!-- Right: Transaction Ledger & Management -->
+        <div class="card ledger-panel-card">
+          <div class="card-header">
+            <h3>Transactions Ledger</h3>
+            <div class="ledger-header-actions">
+              <span class="badge badge-secondary" id="tx-count-badge">0 Entries</span>
+              <button id="btn-clear-budget" class="btn-text btn-sm text-danger">Reset All</button>
+            </div>
+          </div>
+
+          <!-- Filter & Search Controls -->
+          <div class="ledger-filters-bar">
+            <div class="search-input-box compact">
+              <i data-lucide="search"></i>
+              <input type="text" id="tx-search-input" placeholder="Search by title or vendor...">
+            </div>
+            <select id="tx-filter-type" class="form-input form-input-sm">
+              <option value="all">All Types</option>
+              <option value="expense">Expenses Only</option>
+              <option value="income">Incomes Only</option>
+            </select>
+            <select id="tx-filter-category" class="form-input form-input-sm">
+              <option value="all">All Categories</option>
+              <option value="Food & Dining">Food & Dining</option>
+              <option value="Housing & Rent">Housing & Rent</option>
+              <option value="Groceries">Groceries</option>
+              <option value="Utilities">Utilities</option>
+              <option value="Transport">Transport</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="Health">Health</option>
+              <option value="Salary">Salary</option>
+              <option value="Freelance">Freelance</option>
+              <option value="Investment">Investment</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <!-- Transactions List Table -->
+          <div class="tx-table-container">
+            <table class="tx-table" id="tx-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Description</th>
+                  <th>Category</th>
+                  <th>Method</th>
+                  <th class="text-right">Amount</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody id="tx-table-body">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+            <div id="tx-empty-state" class="empty-state-box">
+              <i data-lucide="receipt" class="empty-icon"></i>
+              <p>No transactions found. Click <strong>"+ Add Transaction"</strong> or load sample data to get started.</p>
+            </div>
+          </div>
+
+          <!-- Data Portability Footer -->
+          <div class="card-section-divider"></div>
+          <div class="data-backup-row">
+            <span>Data stored securely in your browser's LocalStorage.</span>
+            <div class="backup-actions">
+              <button id="btn-backup-json" class="btn-text btn-sm">Backup JSON</button>
+              <label for="import-json-file" class="btn-text btn-sm clickable">Import JSON</label>
+              <input type="file" id="import-json-file" accept=".json" class="hidden">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================== -->
+    <!-- VIEW 5: DAILY CALCULATORS SUITE         -->
+    <!-- ======================================== -->
+    <section id="view-calculators" class="app-view">
+      <div class="view-header">
+        <div>
+          <h2 class="view-title">Daily Calculators & Converters</h2>
+          <p class="view-subtitle">Interactive financial, health, shopping, and everyday utility calculators with visual results.</p>
+        </div>
+      </div>
+
+      <!-- Calculators Sub-Navigation -->
+      <div class="sub-nav-tabs">
+        <button class="sub-tab-btn active" data-calc-tab="emi">
+          <i data-lucide="landmark"></i> Loan & EMI
+        </button>
+        <button class="sub-tab-btn" data-calc-tab="health">
+          <i data-lucide="activity"></i> Health Hub (BMI & Water)
+        </button>
+        <button class="sub-tab-btn" data-calc-tab="tip">
+          <i data-lucide="receipt"></i> Tip & Bill Split
+        </button>
+        <button class="sub-tab-btn" data-calc-tab="discount">
+          <i data-lucide="tag"></i> Discount & Tax
+        </button>
+        <button class="sub-tab-btn" data-calc-tab="date">
+          <i data-lucide="calendar"></i> Age & Date Diff
+        </button>
+        <button class="sub-tab-btn" data-calc-tab="utility">
+          <i data-lucide="shuffle"></i> Unit & Password
+        </button>
+      </div>
+
+      <!-- CALC 1: LOAN & EMI CALCULATOR -->
+      <div id="calc-tab-emi" class="calc-tab-content active">
+        <div class="calc-grid-layout">
+          <!-- Inputs Card -->
+          <div class="card calc-input-card">
+            <div class="card-header">
+              <h3>Loan Parameters</h3>
+            </div>
+
+            <div class="control-group">
+              <label for="loan-amount" class="form-label">Loan Amount ($)</label>
+              <div class="input-with-label">
+                <span>$</span>
+                <input type="number" id="loan-amount" class="form-input" value="50000" min="1000" step="1000">
+              </div>
+              <input type="range" id="loan-amount-slider" min="5000" max="1000000" step="5000" value="50000" class="form-range">
+            </div>
+
+            <div class="control-group">
+              <label for="loan-rate" class="form-label">Annual Interest Rate (%)</label>
+              <div class="input-with-label">
+                <span>%</span>
+                <input type="number" id="loan-rate" class="form-input" value="7.5" min="0.1" max="30" step="0.1">
+              </div>
+              <input type="range" id="loan-rate-slider" min="1" max="25" step="0.25" value="7.5" class="form-range">
+            </div>
+
+            <div class="control-group">
+              <label for="loan-tenure" class="form-label">Loan Tenure (Years)</label>
+              <div class="input-with-label">
+                <span>Yrs</span>
+                <input type="number" id="loan-tenure" class="form-input" value="5" min="1" max="30">
+              </div>
+              <input type="range" id="loan-tenure-slider" min="1" max="30" value="5" class="form-range">
+            </div>
+          </div>
+
+          <!-- Results Card -->
+          <div class="card calc-results-card">
+            <div class="card-header">
+              <h3>Payment Breakdown</h3>
+              <span class="badge badge-success">Monthly Estimate</span>
+            </div>
+
+            <div class="emi-primary-result">
+              <span class="result-label">Monthly EMI Payment</span>
+              <span class="result-number" id="emi-monthly-val">$1,001.90</span>
+            </div>
+
+            <div class="emi-metrics-row">
+              <div class="emi-metric-box">
+                <span class="box-label">Principal Amount</span>
+                <span class="box-val" id="emi-principal-val">$50,000</span>
+              </div>
+              <div class="emi-metric-box">
+                <span class="box-label">Total Interest</span>
+                <span class="box-val text-danger" id="emi-interest-val">$10,114</span>
+              </div>
+              <div class="emi-metric-box">
+                <span class="box-label">Total Payable</span>
+                <span class="box-val text-primary" id="emi-total-val">$60,114</span>
+              </div>
+            </div>
+
+            <!-- Visual Split Bar -->
+            <div class="split-bar-section">
+              <div class="split-bar-labels">
+                <span>Principal: <strong id="emi-principal-pct">83%</strong></span>
+                <span>Interest: <strong id="emi-interest-pct">17%</strong></span>
+              </div>
+              <div class="split-bar-track">
+                <div id="emi-principal-fill" class="split-fill-principal" style="width: 83%;"></div>
+                <div id="emi-interest-fill" class="split-fill-interest" style="width: 17%;"></div>
+              </div>
+            </div>
+
+            <!-- Amortization Schedule Preview -->
+            <div class="card-section-divider"></div>
+            <h4>Amortization Schedule (Year-by-Year)</h4>
+            <div class="amortization-table-wrap">
+              <table class="amortization-table">
+                <thead>
+                  <tr>
+                    <th>Year</th>
+                    <th>Principal Paid</th>
+                    <th>Interest Paid</th>
+                    <th>Balance Remaining</th>
+                  </tr>
+                </thead>
+                <tbody id="amortization-tbody">
+                  <!-- Dynamically computed -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CALC 2: HEALTH HUB (BMI, WATER & CALORIES) -->
+      <div id="calc-tab-health" class="calc-tab-content">
+        <div class="health-hub-grid">
+          <!-- Tool A: BMI Calculator -->
+          <div class="card health-card">
+            <div class="card-header">
+              <div class="tool-icon-box health-color sm">
+                <i data-lucide="scale"></i>
+              </div>
+              <h3>Body Mass Index (BMI)</h3>
+            </div>
+
+            <div class="unit-toggle-row">
+              <button class="btn-toggle active" id="btn-bmi-metric">Metric (kg, cm)</button>
+              <button class="btn-toggle" id="btn-bmi-imperial">Imperial (lbs, ft/in)</button>
+            </div>
+
+            <!-- Metric Inputs -->
+            <div id="bmi-inputs-metric" class="bmi-inputs-group">
+              <div class="form-row">
+                <div class="form-col">
+                  <label for="bmi-weight-metric" class="form-label">Weight (kg)</label>
+                  <input type="number" id="bmi-weight-metric" class="form-input" value="70" min="20" max="300">
+                </div>
+                <div class="form-col">
+                  <label for="bmi-height-metric" class="form-label">Height (cm)</label>
+                  <input type="number" id="bmi-height-metric" class="form-input" value="175" min="50" max="250">
+                </div>
+              </div>
+            </div>
+
+            <!-- Imperial Inputs (Hidden by default) -->
+            <div id="bmi-inputs-imperial" class="bmi-inputs-group hidden">
+              <div class="form-row">
+                <div class="form-col">
+                  <label for="bmi-weight-imp" class="form-label">Weight (lbs)</label>
+                  <input type="number" id="bmi-weight-imp" class="form-input" value="154" min="40" max="600">
+                </div>
+                <div class="form-col">
+                  <label for="bmi-height-ft" class="form-label">Feet</label>
+                  <input type="number" id="bmi-height-ft" class="form-input" value="5" min="2" max="8">
+                </div>
+                <div class="form-col">
+                  <label for="bmi-height-in" class="form-label">Inches</label>
+                  <input type="number" id="bmi-height-in" class="form-input" value="9" min="0" max="11">
+                </div>
+              </div>
+            </div>
+
+            <!-- BMI Gauge & Result -->
+            <div class="bmi-result-box">
+              <div class="bmi-score-wrap">
+                <span class="bmi-score-label">Your BMI</span>
+                <span class="bmi-score-val" id="bmi-val">22.9</span>
+                <span class="bmi-category-badge badge-success" id="bmi-category">Normal Weight</span>
+              </div>
+
+              <!-- Color Meter -->
+              <div class="bmi-meter-wrap">
+                <div class="bmi-meter-track">
+                  <div class="meter-sec sec-under" title="Underweight (&lt;18.5)"></div>
+                  <div class="meter-sec sec-normal" title="Normal (18.5-24.9)"></div>
+                  <div class="meter-sec sec-over" title="Overweight (25-29.9)"></div>
+                  <div class="meter-sec sec-obese" title="Obese (&gt;30)"></div>
+                  <div id="bmi-needle" class="bmi-needle" style="left: 45%;"></div>
+                </div>
+                <div class="bmi-labels-row">
+                  <span>18.5</span>
+                  <span>25</span>
+                  <span>30</span>
+                </div>
+              </div>
+
+              <p class="bmi-healthy-range" id="bmi-healthy-advice">
+                Healthy weight for your height: <strong>56.7 kg – 76.3 kg</strong>
+              </p>
+            </div>
+          </div>
+
+          <!-- Tool B: Daily Water Hydration Tracker -->
+          <div class="card health-card">
+            <div class="card-header">
+              <div class="tool-icon-box calc-color sm">
+                <i data-lucide="droplet"></i>
+              </div>
+              <h3>Daily Water Hydration</h3>
+            </div>
+
+            <div class="form-row">
+              <div class="form-col">
+                <label for="water-weight" class="form-label">Body Weight (kg)</label>
+                <input type="number" id="water-weight" class="form-input" value="70" min="30" max="250">
+              </div>
+              <div class="form-col">
+                <label for="water-activity" class="form-label">Daily Activity</label>
+                <select id="water-activity" class="form-input">
+                  <option value="sedentary">Sedentary (Desk Job)</option>
+                  <option value="moderate" selected>Moderate (30-60 min walk)</option>
+                  <option value="active">Active (Heavy Workout)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="water-target-box">
+              <div class="water-target-header">
+                <span>Recommended Daily Goal:</span>
+                <strong id="water-target-liters">2.6 Liters (approx 10 glasses)</strong>
+              </div>
+
+              <!-- Interactive Clickable Glass Logger -->
+              <div class="glasses-grid" id="glasses-grid">
+                <!-- 8-12 interactive cups generated by JS -->
+              </div>
+              <div class="water-logged-status">
+                <span id="water-logged-label">0 of 10 glasses drunk today</span>
+                <button id="btn-reset-water" class="btn-text btn-sm">Reset Today</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tool C: Calorie & TDEE Calculator -->
+          <div class="card health-card">
+            <div class="card-header">
+              <div class="tool-icon-box filter-color sm">
+                <i data-lucide="flame"></i>
+              </div>
+              <h3>Daily Calorie & TDEE</h3>
+            </div>
+
+            <div class="form-row">
+              <div class="form-col">
+                <label for="tdee-age" class="form-label">Age</label>
+                <input type="number" id="tdee-age" class="form-input" value="28" min="15" max="100">
+              </div>
+              <div class="form-col">
+                <label for="tdee-gender" class="form-label">Gender</label>
+                <select id="tdee-gender" class="form-input">
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
+              <div class="form-col">
+                <label for="tdee-activity" class="form-label">Activity</label>
+                <select id="tdee-activity" class="form-input">
+                  <option value="1.2">Sedentary</option>
+                  <option value="1.375" selected>Light Exercise (1-3 days)</option>
+                  <option value="1.55">Moderate (3-5 days)</option>
+                  <option value="1.725">Heavy Workout (6-7 days)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- TDEE Results -->
+            <div class="tdee-results-grid">
+              <div class="tdee-box">
+                <span class="tdee-label">Maintenance (TDEE)</span>
+                <span class="tdee-val" id="tdee-maintain">2,150 kcal</span>
+              </div>
+              <div class="tdee-box text-success">
+                <span class="tdee-label">Weight Loss (Deficit)</span>
+                <span class="tdee-val" id="tdee-loss">1,650 kcal</span>
+              </div>
+              <div class="tdee-box text-primary">
+                <span class="tdee-label">Muscle Gain (Surplus)</span>
+                <span class="tdee-val" id="tdee-gain">2,450 kcal</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CALC 3: TIP & BILL SPLITTER -->
+      <div id="calc-tab-tip" class="calc-tab-content">
+        <div class="calc-grid-layout">
+          <div class="card calc-input-card">
+            <div class="card-header">
+              <h3>Bill & Gratuity</h3>
+            </div>
+
+            <div class="control-group">
+              <label for="tip-bill-amount" class="form-label">Total Bill Amount ($)</label>
+              <div class="input-with-label">
+                <span>$</span>
+                <input type="number" id="tip-bill-amount" class="form-input" value="85.00" min="0" step="0.5">
+              </div>
+            </div>
+
+            <!-- Tip Percentage Buttons -->
+            <div class="control-group">
+              <label class="form-label">Select Tip Percentage</label>
+              <div class="tip-preset-grid">
+                <button type="button" class="btn-tip-preset" data-pct="10">10%</button>
+                <button type="button" class="btn-tip-preset active" data-pct="15">15%</button>
+                <button type="button" class="btn-tip-preset" data-pct="18">18%</button>
+                <button type="button" class="btn-tip-preset" data-pct="20">20%</button>
+                <button type="button" class="btn-tip-preset" data-pct="25">25%</button>
+              </div>
+              <div class="custom-tip-row">
+                <label for="tip-custom-pct" class="form-label">Or Custom Tip %</label>
+                <input type="number" id="tip-custom-pct" class="form-input form-input-sm" placeholder="Custom %" min="0" max="100">
+              </div>
+            </div>
+
+            <!-- Number of People -->
+            <div class="control-group">
+              <label for="tip-people-count" class="form-label">Split Among Friends (People)</label>
+              <div class="stepper-row">
+                <button id="btn-people-minus" class="btn-stepper"><i data-lucide="minus"></i></button>
+                <input type="number" id="tip-people-count" class="form-input stepper-input" value="3" min="1" max="100">
+                <button id="btn-people-plus" class="btn-stepper"><i data-lucide="plus"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Results Card -->
+          <div class="card calc-results-card">
+            <div class="card-header">
+              <h3>Split Breakdown</h3>
+            </div>
+
+            <div class="split-hero-result">
+              <span class="split-hero-label">Each Person Pays</span>
+              <span class="split-hero-number" id="tip-per-person">$32.58</span>
+            </div>
+
+            <div class="emi-metrics-row">
+              <div class="emi-metric-box">
+                <span class="box-label">Base Bill</span>
+                <span class="box-val" id="tip-base-bill">$85.00</span>
+              </div>
+              <div class="emi-metric-box">
+                <span class="box-label">Total Tip</span>
+                <span class="box-val text-success" id="tip-total-val">$12.75</span>
+              </div>
+              <div class="emi-metric-box">
+                <span class="box-label">Total with Tip</span>
+                <span class="box-val text-primary" id="tip-grand-total">$97.75</span>
+              </div>
+            </div>
+
+            <div class="card-section-divider"></div>
+            <div class="split-shares-summary">
+              <p>Tip share per person: <strong id="tip-per-person-tip">$4.25</strong></p>
+              <p>Base share per person: <strong id="tip-per-person-base">$28.33</strong></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CALC 4: DISCOUNT & SALES TAX -->
+      <div id="calc-tab-discount" class="calc-tab-content">
+        <div class="calc-grid-layout">
+          <div class="card calc-input-card">
+            <div class="card-header">
+              <h3>Price & Discount Settings</h3>
+            </div>
+
+            <div class="control-group">
+              <label for="disc-original-price" class="form-label">Original Price ($)</label>
+              <div class="input-with-label">
+                <span>$</span>
+                <input type="number" id="disc-original-price" class="form-input" value="120.00" min="0" step="1">
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label for="disc-percent" class="form-label">Discount Percentage (%)</label>
+              <div class="input-with-label">
+                <span>%</span>
+                <input type="number" id="disc-percent" class="form-input" value="25" min="0" max="100">
+              </div>
+              <div class="tip-preset-grid">
+                <button type="button" class="btn-disc-preset" data-pct="10">10%</button>
+                <button type="button" class="btn-disc-preset" data-pct="20">20%</button>
+                <button type="button" class="btn-disc-preset active" data-pct="25">25%</button>
+                <button type="button" class="btn-disc-preset" data-pct="50">50%</button>
+                <button type="button" class="btn-disc-preset" data-pct="70">70%</button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label for="disc-tax-percent" class="form-label">Sales Tax (%) - Optional</label>
+              <div class="input-with-label">
+                <span>%</span>
+                <input type="number" id="disc-tax-percent" class="form-input" value="8" min="0" max="40">
+              </div>
+            </div>
+          </div>
+
+          <div class="card calc-results-card">
+            <div class="card-header">
+              <h3>Final Price</h3>
+              <span class="badge badge-success" id="disc-savings-badge">You Save $30.00!</span>
+            </div>
+
+            <div class="split-hero-result">
+              <span class="split-hero-label">Final Amount to Pay</span>
+              <span class="split-hero-number" id="disc-final-price">$97.20</span>
+            </div>
+
+            <div class="emi-metrics-row">
+              <div class="emi-metric-box">
+                <span class="box-label">Original</span>
+                <span class="box-val text-muted" style="text-decoration: line-through;" id="disc-orig-display">$120.00</span>
+              </div>
+              <div class="emi-metric-box">
+                <span class="box-label">Discount Saved</span>
+                <span class="box-val text-success" id="disc-saved-val">-$30.00</span>
+              </div>
+              <div class="emi-metric-box">
+                <span class="box-label">Sales Tax</span>
+                <span class="box-val" id="disc-tax-val">+$7.20</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CALC 5: AGE & DATE DIFFERENCE -->
+      <div id="calc-tab-date" class="calc-tab-content">
+        <div class="calc-grid-layout">
+          <div class="card calc-input-card">
+            <div class="card-header">
+              <h3>Birthdate or Event Date</h3>
+            </div>
+
+            <div class="control-group">
+              <label for="date-birth-input" class="form-label">Select Date of Birth</label>
+              <input type="date" id="date-birth-input" class="form-input" value="1998-05-15">
+            </div>
+
+            <div class="control-group">
+              <label for="date-compare-input" class="form-label">Calculate Age as of Date</label>
+              <input type="date" id="date-compare-input" class="form-input">
+              <small class="form-hint">Defaults to today's date.</small>
+            </div>
+          </div>
+
+          <div class="card calc-results-card">
+            <div class="card-header">
+              <h3>Exact Age & Milestones</h3>
+            </div>
+
+            <div class="age-hero-result">
+              <span class="age-main-val" id="age-hero-text">28 Years, 6 Months, 1 Day</span>
+            </div>
+
+            <div class="age-metrics-grid">
+              <div class="age-stat-box">
+                <span class="stat-num" id="age-total-months">342</span>
+                <span class="stat-lbl">Total Months</span>
+              </div>
+              <div class="age-stat-box">
+                <span class="stat-num" id="age-total-weeks">1,488</span>
+                <span class="stat-lbl">Total Weeks</span>
+              </div>
+              <div class="age-stat-box">
+                <span class="stat-num" id="age-total-days">10,412</span>
+                <span class="stat-lbl">Total Days</span>
+              </div>
+              <div class="age-stat-box">
+                <span class="stat-num" id="age-total-hours">249,888</span>
+                <span class="stat-lbl">Total Hours</span>
+              </div>
+            </div>
+
+            <!-- Next Birthday Countdown Card -->
+            <div class="birthday-countdown-card">
+              <i data-lucide="cake" class="cake-icon"></i>
+              <div>
+                <strong>Next Birthday Countdown</strong>
+                <p id="next-birthday-text">Your next birthday is in 180 days!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CALC 6: UNIT CONVERTER & PASSWORD GENERATOR -->
+      <div id="calc-tab-utility" class="calc-tab-content">
+        <div class="calc-grid-layout">
+          <!-- Unit Converter -->
+          <div class="card calc-input-card">
+            <div class="card-header">
+              <div class="tool-icon-box util-color sm">
+                <i data-lucide="shuffle"></i>
+              </div>
+              <h3>Universal Unit Converter</h3>
+            </div>
+
+            <div class="control-group">
+              <label for="unit-category" class="form-label">Category</label>
+              <select id="unit-category" class="form-input">
+                <option value="length">Length (Meters, Feet, Miles, etc.)</option>
+                <option value="weight">Weight (Kg, Pounds, Ounces, etc.)</option>
+                <option value="temp">Temperature (°C, °F, Kelvin)</option>
+                <option value="speed">Speed (km/h, mph, m/s)</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <div class="form-col">
+                <label for="unit-val-from" class="form-label">From</label>
+                <input type="number" id="unit-val-from" class="form-input" value="10">
+                <select id="unit-select-from" class="form-input mt-2">
+                  <!-- Dynamically populated -->
+                </select>
+              </div>
+              <div class="unit-swap-box">
+                <button id="btn-swap-units" class="btn-icon" title="Swap Units">
+                  <i data-lucide="arrow-left-right"></i>
+                </button>
+              </div>
+              <div class="form-col">
+                <label for="unit-val-to" class="form-label">To (Result)</label>
+                <input type="number" id="unit-val-to" class="form-input" readonly>
+                <select id="unit-select-to" class="form-input mt-2">
+                  <!-- Dynamically populated -->
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Password Generator -->
+          <div class="card calc-results-card">
+            <div class="card-header">
+              <div class="tool-icon-box doc-color sm">
+                <i data-lucide="key"></i>
+              </div>
+              <h3>Secure Password Generator</h3>
+            </div>
+
+            <!-- Generated Output Box -->
+            <div class="pwd-output-box">
+              <input type="text" id="pwd-output" class="pwd-input" readonly value="Click Generate">
+              <button id="btn-copy-pwd" class="btn-icon" title="Copy to Clipboard">
+                <i data-lucide="copy"></i>
+              </button>
+            </div>
+
+            <!-- Strength Meter -->
+            <div class="strength-meter-wrap">
+              <div class="strength-bar-track">
+                <div id="strength-bar-fill" class="strength-bar-fill strength-strong" style="width: 80%;"></div>
+              </div>
+              <span id="strength-label" class="strength-text text-success">Strength: Very Strong</span>
+            </div>
+
+            <!-- Settings -->
+            <div class="control-group">
+              <div class="slider-header">
+                <label for="pwd-length-slider" class="form-label">Password Length</label>
+                <span id="pwd-length-val" class="slider-val">16 chars</span>
+              </div>
+              <input type="range" id="pwd-length-slider" min="8" max="36" value="16" class="form-range">
+            </div>
+
+            <div class="pwd-checkboxes">
+              <label class="checkbox-label">
+                <input type="checkbox" id="pwd-inc-upper" checked>
+                <span>Uppercase (A-Z)</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="pwd-inc-lower" checked>
+                <span>Lowercase (a-z)</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="pwd-inc-num" checked>
+                <span>Numbers (0-9)</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="pwd-inc-sym" checked>
+                <span>Symbols (!@#$%)</span>
+              </label>
+            </div>
+
+            <button id="btn-generate-pwd" class="btn btn-primary btn-block">
+              <i data-lucide="refresh-cw"></i> Generate New Password
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom Ad Banner (Free Tier) -->
+    <div id="bottom-ad-banner" class="ad-banner free-ad mt-4">
+      <div class="ad-content">
+        <span class="ad-badge">SPONSORED</span>
+        <p class="ad-text">
+          <strong>DailyMate Pro:</strong> Export 1024px Ultra-HD QR codes, auto-fill invoices, and remove all ads forever.
+        </p>
+        <button class="ad-cta btn-pro-trigger">Go Ad-Free with Pro</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- FOOTER                                     -->
+  <!-- ========================================== -->
+  <footer class="app-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <div class="brand-logo sm">
+          <div class="logo-icon-box">
+            <i data-lucide="layers" class="logo-icon"></i>
+          </div>
+          <span class="brand-name">Daily<span class="brand-accent">Mate</span></span>
+        </div>
+        <p class="footer-desc">Your private, all-in-one daily utility platform. Engineered with standard HTML5, CSS3 and Vanilla JavaScript.</p>
+        <div class="footer-privacy-pill">
+          <i data-lucide="shield-check"></i> Zero Tracking • Local Storage Only
+        </div>
+      </div>
+
+      <div class="footer-links-group">
+        <h4>Utility Suites</h4>
+        <ul>
+          <li><a href="#qr" class="switch-view-btn" data-view="qr">QR Code Studio</a></li>
+          <li><a href="#image-pdf" class="switch-view-btn" data-view="image-pdf">Image & PDF Tools</a></li>
+          <li><a href="#budget" class="switch-view-btn" data-view="budget">Budget Planner</a></li>
+          <li><a href="#calculators" class="switch-view-btn" data-view="calculators">Daily Calculators</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-links-group">
+        <h4>Pro Simulator</h4>
+        <p class="footer-pro-info">Test both the ad-supported Free tier and the ad-free Pro tier anytime.</p>
+        <button id="btn-footer-toggle-pro" class="btn btn-outline btn-sm">
+          <i data-lucide="crown"></i> Toggle Pro Mode (Demo)
+        </button>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>© 2026 DailyMate Suite. Free tools supported by ethical ads.</span>
+      <span>Designed with clean, mobile-first web standards.</span>
+    </div>
+  </footer>
+
+  <!-- ========================================== -->
+  <!-- MOBILE BOTTOM NAVIGATION BAR               -->
+  <!-- ========================================== -->
+  <nav class="mobile-bottom-nav" aria-label="Mobile Navigation">
+    <button class="bottom-nav-item active" data-view="home">
+      <i data-lucide="layout-grid"></i>
+      <span>Home</span>
+    </button>
+    <button class="bottom-nav-item" data-view="qr">
+      <i data-lucide="qr-code"></i>
+      <span>QR</span>
+    </button>
+    <button class="bottom-nav-item" data-view="image-pdf">
+      <i data-lucide="file-image"></i>
+      <span>Image/PDF</span>
+    </button>
+    <button class="bottom-nav-item" data-view="budget">
+      <i data-lucide="wallet"></i>
+      <span>Budget</span>
+    </button>
+    <button class="bottom-nav-item" data-view="calculators">
+      <i data-lucide="calculator"></i>
+      <span>Calcs</span>
+    </button>
+  </nav>
+
+  <!-- ========================================== -->
+  <!-- MODALS & POPUPS                            -->
+  <!-- ========================================== -->
+
+  <!-- MODAL 1: PRO UPGRADE & SIMULATOR MODAL -->
+  <div id="modal-pro" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-dialog modal-pro-dialog">
+      <div class="modal-header">
+        <div class="modal-title-with-icon">
+          <span class="pro-crown-icon">👑</span>
+          <div>
+            <h3>Unlock DailyMate Pro</h3>
+            <p>Experience uninterrupted productivity with zero ads and HD export tools.</p>
+          </div>
+        </div>
+        <button class="btn-icon modal-close" aria-label="Close Modal">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Interactive Simulator Switch -->
+        <div class="pro-simulator-switch-card">
+          <div class="switch-card-info">
+            <strong>🎮 Live Tier Simulator</strong>
+            <p>Toggle below to immediately test Free (with ads) vs Pro (ad-free & unlocked).</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="pro-mode-toggle-checkbox">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <!-- Plan Comparison Table -->
+        <div class="pro-comparison-table-wrap">
+          <table class="pro-comparison-table">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Free Tier</th>
+                <th class="col-pro">Pro Tier 👑</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Ad-Free Experience</td>
+                <td><span class="text-muted">Supported by Ads</span></td>
+                <td><strong class="text-success">100% Ad-Free</strong></td>
+              </tr>
+              <tr>
+                <td>QR Code Resolution</td>
+                <td>Standard (Up to 512px)</td>
+                <td><strong class="text-success">1024px Ultra HD Vector</strong></td>
+              </tr>
+              <tr>
+                <td>Custom QR Center Logo</td>
+                <td>Standard Text</td>
+                <td><strong class="text-success">Custom Logo & Icons</strong></td>
+              </tr>
+              <tr>
+                <td>Image & PDF Merging</td>
+                <td>Unlimited Free</td>
+                <td><strong class="text-success">High DPI Rasterization</strong></td>
+              </tr>
+              <tr>
+                <td>Budget Tracking & Charts</td>
+                <td>Local Storage</td>
+                <td><strong class="text-success">Local + JSON Export Sync</strong></td>
+              </tr>
+              <tr>
+                <td>Pricing</td>
+                <td><strong>$0 Forever</strong></td>
+                <td><strong>$3.99 / mo or $29 / yr</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pro-modal-actions">
+          <button id="btn-modal-activate-pro" class="btn btn-primary btn-block">
+            <i data-lucide="sparkles"></i> <span id="modal-activate-pro-text">Activate Pro Demo Now</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: ADD / EDIT TRANSACTION MODAL -->
+  <div id="modal-transaction" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="tx-modal-title">Add New Transaction</h3>
+        <button class="btn-icon modal-close" aria-label="Close Modal">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <form id="tx-form" class="modal-body">
+        <input type="hidden" id="tx-id-input">
+        
+        <div class="form-row">
+          <div class="form-col">
+            <label class="form-label">Transaction Type</label>
+            <div class="type-toggle-pills">
+              <label class="pill-radio">
+                <input type="radio" name="tx-type" value="expense" checked>
+                <span class="pill-text pill-expense">Expense</span>
+              </label>
+              <label class="pill-radio">
+                <input type="radio" name="tx-type" value="income">
+                <span class="pill-text pill-income">Income</span>
+              </label>
+            </div>
+          </div>
+          <div class="form-col">
+            <label for="tx-amount" class="form-label">Amount ($)</label>
+            <div class="input-with-label">
+              <span>$</span>
+              <input type="number" id="tx-amount" class="form-input" placeholder="0.00" min="0.01" step="0.01" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label for="tx-title" class="form-label">Description / Vendor</label>
+          <input type="text" id="tx-title" class="form-input" placeholder="e.g. Whole Foods Market, Monthly Salary, Gym" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-col">
+            <label for="tx-category" class="form-label">Category</label>
+            <select id="tx-category" class="form-input" required>
+              <optgroup label="Expense Categories" id="cat-group-expense">
+                <option value="Food & Dining">Food & Dining</option>
+                <option value="Housing & Rent">Housing & Rent</option>
+                <option value="Groceries">Groceries</option>
+                <option value="Utilities">Utilities</option>
+                <option value="Transport">Transport</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Health">Health</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Other">Other Expense</option>
+              </optgroup>
+              <optgroup label="Income Categories" id="cat-group-income">
+                <option value="Salary">Salary</option>
+                <option value="Freelance">Freelance</option>
+                <option value="Investment">Investment</option>
+                <option value="Other">Other Income</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <div class="form-col">
+            <label for="tx-date" class="form-label">Date</label>
+            <input type="date" id="tx-date" class="form-input" required>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label for="tx-method" class="form-label">Payment Method</label>
+          <select id="tx-method" class="form-input">
+            <option value="Credit / Debit Card">Credit / Debit Card</option>
+            <option value="Bank Transfer">Bank Transfer</option>
+            <option value="Cash">Cash</option>
+            <option value="Digital Wallet">Digital Wallet (Apple/Google Pay)</option>
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline modal-close">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-tx">Save Transaction</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 3: COMMAND PALETTE / QUICK SEARCH -->
+  <div id="modal-search" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-dialog modal-search-dialog">
+      <div class="search-palette-header">
+        <i data-lucide="search" class="search-palette-icon"></i>
+        <input type="text" id="palette-input" placeholder="Type a tool name or action (e.g. 'qr', 'emi', 'compress', 'bmi', 'budget')...">
+        <kbd class="kbd-esc modal-close">ESC</kbd>
+      </div>
+      <div class="palette-results-list" id="palette-results">
+        <!-- Results dynamically populated -->
+      </div>
+      <div class="palette-footer">
+        <span>Use <kbd>↑</kbd> <kbd>↓</kbd> to navigate, <kbd>Enter</kbd> to select</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Modules -->
+  <script src="js/qr-tool.js"></script>
+  <script src="js/image-pdf-tool.js"></script>
+  <script src="js/budget-tool.js"></script>
+  <script src="js/calculators.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
